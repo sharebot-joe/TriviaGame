@@ -1,0 +1,56 @@
+
+body {
+	padding-top: 30px;
+	background: url("../images/lonelyisland.jpg") no-repeat center center;
+  background-size: cover;
+  background-attachment: fixed;
+  font-family: verdana, sans-serif;
+  
+}
+
+.titlediv {
+	margin: 10px 0;
+	padding: 20px;
+	background: indigo;
+	color: #fff;
+	border-radius: 12px;
+
+}
+.titlediv h4 {
+	line-height: 2rem;
+}
+
+
+.clickme {
+  font-size: 1.2rem;
+}
+
+.frame {
+	margin: 10px 0;
+	padding: 20px;
+	height: 600px;
+	background: white;
+	border: 5px solid pink;
+  border-radius: 12px;
+}
+/*Button Effect*/
+.button {
+  padding: 15px 25px;
+  font-size: 24px;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  color: #fff;
+  background-color: #F5F5F5;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 6px #999;
+}
+
+.button:hover {background-color: #D3D3D3}
+
+.button:active {
+  background-color: #D3D3D3;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
