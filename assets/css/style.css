@@ -37,7 +37,7 @@ body {
 }
 
 .frametop {
-	padding: 20px 0;
+	padding: 10px 0;
 	font-size: 1rem;
 }
 
@@ -61,14 +61,14 @@ body {
 	border: 2px solid black;
 	font-weight: bold;
 }
-.timeremaining {
+#timeremaining {
 	font-size: 1.3rem;
 	color: #296037;
 }
 .framemiddle {
 	position: relative;
 	margin: 20px auto;
-	padding: 20px 10px;
+	padding: 30px;
 	width: 100%;
 	background: white;
 	text-align: center;

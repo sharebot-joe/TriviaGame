@@ -20,66 +20,182 @@ $(document).ready(function() {
 	var numQuestions = arr.length;	
 	var randomArr = [];
 
-	var intervalHandle = null;
-	var blinking = null;
+	var blinkInterval = null;
 	var questionIndex = '';
 	var answerChoices = [];
+	var resultMsg = '';
+	var count='';
+	var secondsInterval=null;
 
+	// Run main program
+	$('#introimage').one('click', function() {
+		hideIntro();
+		runGame();
+	});
 
 	function hideIntro() {
 		$('#introimage').hide();
 		$('.clickme').hide();
 	}
-	function countdown() {
-		var count=6;
-		$('.timeremaining').html(count + " seconds")
-		intervalHandle=setInterval(timer, 1000); 
-	
-		function timer()
-		{
-		  if (count <= 8)
-		  {
-		     $('.timeremaining').css({ 'color': 'red' })
-		  }
-		  if (count <= 3)
-		  {
-		     blinking = setInterval(function(){ $('.timeremaining').fadeIn(175).fadeOut(175); }, 0);	
-		     // $('.timeremaining').fadeIn(175).fadeOut(175).fadeIn(175).fadeOut(175).fadeIn(175).fadeOut(175).fadeIn(175).fadeOut(175).fadeIn(175);
-		  }
-		  if (count <= 0)
-		  {
-		   	clearInterval(blinking);
-		   	clearInterval(intervalHandle);
 
-		    //counter ended, do something here;
-				processUnanswered();
-				
-				if (questionIndex > (numQuestions - 1)) {
-					showResults();
-					setTimeout(function() { runGame(); }, 5000);
-					
-				} else {
-					setTimeout(function(){ showQuestion(questionIndex); }, 5000);	
-				}
+	function runGame() {
+		initializeGame();
+		secondsInterval=setInterval(timer, 1000);
+		showQuestion(questionIndex);
+		showButtons(questionIndex);
 
-		    return;
-		  }
-	  	$('.timeremaining').html(count + " seconds")
-		  count=count-1; 
-		}
+	}
+
+	function initializeGame() {
+		$('.finalresults').empty();  // Hiding finalresults
+		randomArr = shuffle(arr);
+		questionIndex = 0;
+		correct = 0;
+		incorrect = 0;
+		count=7;
+	}
+
+	function showQuestion(index) {
+		$('#timeremaining').html(count + " seconds") //visual placeholder
+		$('.button, .framemiddle').css('display','block');
+		var question = randomArr[index][0];
+		$('.framemiddle').html(question); 
 		
 	}
 
-	function processUnanswered() {
+	function showButtons(index) {
+		answerChoices.push(randomArr[index][1]);
+		answerChoices.pushArray(randomArr[index][2]);
+		answerChoices = shuffle(answerChoices);
+		
+		$('.button').css({'display': 'table-cell', 'opacity': '1'}); // displaying buttons
+
+		var numChoices = answerChoices.length;
+		for (i=0; i < numChoices; i++) {
+			$('.option-' + i).html(answerChoices[i]); // Populating answers
+		}
+
+		$('.button').on('click', buttonClick);
+	}
+
+	function timer() 
+	{
+		clearInterval(blinkInterval);
+		$('#timeremaining').html(count + " seconds")
+
+	  if (count <= 0)
+	  {
+	   	clearInterval(secondsInterval);
+
+	    //counter ended, do something here;
+	    // $('.button').off(buttonClick);
+	    // buttonClick.unbind();
+			processUnanswered();
+			if (questionIndex + 1 === numQuestions) { // Unanswered question with none remaining
+				
+				showResults();
+				count = 7
+				setTimeout(runGame, 5000);
+				
+			} else { // Unaswered question with more remaining
+				questionIndex++
+				count = 7
+				setTimeout(function() { 
+					showQuestion(questionIndex);
+					showButtons(questionIndex);
+					$('button').on("click", buttonClick);	
+				}, 5000);	
+			}
+
+	  //   return;
+	  }
+  	else if (count <= 3)
+	  {
+	    blinkInterval = setIntervalX(function(){ 
+		    	$('#timeremaining').fadeOut(160).fadeIn(160); 
+			  }, 0, 3);	
+	  }
+	  else if (count <= 6)
+	  {
+	     $('#timeremaining').css({ 'color': 'red' })
+	  }
+	  count=count-1; 
+	}
+
+	function setIntervalX(callback, delay, repetitions) {
+    var x = 0;
+    var intervalID = window.setInterval(function () {
+
+       callback();
+
+       if (++x === repetitions) {
+           window.clearInterval(intervalID);
+       }
+    }, delay);
+	}
+	
+	
+		
+function processUnanswered() {
 		incorrect++;  
 		resultMsg = $('.framemiddle').html('The correct answer is ' + randomArr[questionIndex][1] + '.'); // Display result msg
-		$('.framemiddle').append('<img src="assets/images/"' + randomArr[questionIndex][4] + '"'); // Display img
-		$('.framemiddle').append('<div class="factoid">' + randomArr[questionIndex][3] + '</div>'); // Display factoid
-		$('.factoid').css({"margin-top": "20px", "font-size": "1rem"});
+		showImage();
+		showFactoid();
 		fadeWrongAnswers();
 		answerChoices = [];
+}
+
+	// Binding click events
+
+	// var buttonClick = $('.button').on('click', function() {
+		
+
+
+	function buttonClick () {
+		// Stopping countdown
+		clearInterval(secondsInterval);
+		clearInterval(blinkInterval);
+
+		//extracting text value from button
+		var value = $(this).text();
+		// Checking for correct answer
+		var isCorrect = false;
+		if (value === randomArr[questionIndex][1]) {
+			isCorrect = true;
+		}
+		// Displaying result msg
+		if (isCorrect) {
+			showCorrect()
+		} else {
+			showIncorrect()
+		}
+		// buttonClick.unbind();
+		// $('button').off("click", buttonClick);
+		// $(buttonClick).off();
+		// $('.button').off(buttonClick);
+		showImage();
+		showFactoid();
+		fadeWrongAnswers();
+		
+		answerChoices = [];
 		questionIndex++
+
+		count = 7;
+
+		if (questionIndex > (numQuestions - 1)) {
+			showResults();
+			setTimeout(runGame, 5000);
+		} else {
+			setTimeout(function(){  
+				secondsInterval=setInterval(timer, 1000);
+				showQuestion(questionIndex);
+				showButtons(questionIndex);
+			}, 3000); 		
+		}
 	}
+
+	
+	
 
 	//Function that takes in an array and returns a new array with the same elements shuffled. 
 	function shuffle(array) {
@@ -107,23 +223,30 @@ $(document).ready(function() {
     }
 	};
 
-
-	
-
 	function showResults() {
 		$('.finalresults').append('<div>Correct: ' + correct + '</div>')
 		$('.finalresults').append('<div>Incorrect: ' + incorrect + '</div>')
 		$('.finalresults').append('<div>Unanswered: ' + (numQuestions - correct - incorrect))
 	}
 
-
 	function showCorrect() {
 		correct++
-		resultMsg = $('.framemiddle').html('Yes! The correct answer is ' + randomArr[questionIndex][1] + '.')
+		resultMsg = $('.framemiddle').html('Yes! The correct answer is ' + randomArr[questionIndex][1] + '.');  // 'Correct' message
 	}
+
 	function showIncorrect() {
 		incorrect++
 		resultMsg = $('.framemiddle').html('Wrong! The correct answer is ' + randomArr[questionIndex][1] + '.');
+	}
+
+	function showImage() {
+		$('.framemiddle').prepend('<img id="img" class="img-fluid" src="assets/images/' + randomArr[questionIndex][4] + '" />');  // displaying image
+		$('#img').css({'display': 'block' , 'margin-bottom' : '30px', 'max-width': '100%;', 'height': 'auto'})  //styling image
+	}
+
+	function showFactoid() {
+		$('.framemiddle').append('<div class="factoid">' + randomArr[questionIndex][3] + '</div>'); // Display result factoid
+		$('.factoid').css({"margin-top": "20px", "font-size": "1rem"});
 	}
 
 	// Setting transparency on wrong answers
@@ -140,106 +263,6 @@ $(document).ready(function() {
 			}
 		}
 	}
-	function showQuestion(index) {
-		var question = randomArr[index][0];
-		$('.framemiddle').html(question); 
-	}
-	function showButtons(index) {
-		answerChoices.push(randomArr[index][1]);
-		answerChoices.pushArray(randomArr[index][2]);
-		answerChoices = shuffle(answerChoices);
-		var numChoices = answerChoices.length;
-		$('.button').css({'display': 'table-cell', 'opacity': '1'}); // displaying buttons
-
-		for (i=0; i < numChoices; i++) {
-			$('.option-' + i).html(answerChoices[i]); // Populating answers
-		}
-	}
-		
-		
-
-	// Binding click events
-	clickHandlers = $('.button').bind('click', function() {
-
-		// Stopping countdown
-		clearInterval(intervalHandle);
-		clearInterval(blinking);
-
-		//extracting text value from button
-		var value = $(this).text();
-
-		// Checking for correct answer
-		var isCorrect = false;
-		if (value === randomArr[questionIndex][1]) {
-			isCorrect = true;
-		}
-
-		// Displaying result msg
-		if (isCorrect) {
-			showCorrect()
-		} else {
-			showIncorrect()
-		}
-		
-		$('.framemiddle').append('<img src="assets/images/"' + randomArr[questionIndex][4] + '"'); // Display result img
-		$('.framemiddle').append('<div class="factoid">' + randomArr[questionIndex][3] + '</div>'); // Display result factoid
-		$('.factoid').css({"margin-top": "20px", "font-size": "1rem"});
-		
-		fadeWrongAnswers();
-		// Unbind click handlers
-		$('.button').unbind();
-		
-		answerChoices = [];
-		questionIndex++
-
-		if (questionIndex > (numQuestions - 1)) {
-			showResults();
-			setTimeout(function() { runGame(); }, 5000);
-		} else {
-			setTimeout(function(){ showQuestion(questionIndex); }, 3000);
-		}
-	});
-	console.log('ShowQuestion Complete')
-		
-	}
-
-	function initializeGame () {
-		$('.finalresults').empty();  // Hiding finalresults
-		$('.framemiddle').css('display','block');
-		randomArr = shuffle(arr);
-		questionIndex = 0;
-		correct = 0;
-		incorrect = 0;
-	}
-	function runGame () {
-		initializeGame();
-		showQuestion(questionIndex);
-		showButtons(questionIndex);
-		countdown(); // Start timer
-		// 
-		// // event = onclick event (function () {
-		// 	if questionIndex < numQuestions
-		// 		get value of clicked button
-
-		// 		if correct 
-		// 			process correct
-		// 		if incorrect
-		// 			process incorrect
-		// 		if timer runs out
-		// 			process unanswered
-		//   else if questionIndex > numQuestions
-		//   	endGame()
-		//   	resetButton()
-		// }	
-	}
-
-	// // Run main program
-	$('#introimage').one('click', function() {
-
-		hideIntro();
-		runGame();
-
-	});
 	
 //document ready
 });	
