@@ -2,8 +2,9 @@ $('.button, .framemiddle').css('display','none');  //temp hiding buttons
 
 $(document).ready(function() {
 
-	var correct = '';
-	var incorrect = '';
+	var correct = '0';
+	var incorrect = '0';
+	var unanswered = '0';
 
 	var arr = [
 		['Who is the Sonics\' all-time leading scorer?','Gary Payton',['Shawn Kemp', 'Kevin Durant', 'Ray Allen'], 'Payton, who scored 18,207 points in his Sonics career, received his popular nickname "The Glove" in 1993 when his cousin phoned him during the week of the Western Conference Finals against Phoenix and told him, "You\'re holding Kevin Johnson like a baseball in a glove"', 'payton.jpg'],
@@ -21,10 +22,10 @@ $(document).ready(function() {
 	var randomArr = [];
 
 	var blinkInterval = null;
-	var questionIndex = '';
+	var questionIndex = 0;
 	var answerChoices = [];
 	var resultMsg = '';
-	var count='';
+	var count=10;
 	var secondsInterval=null;
 
 	// Run main program
@@ -43,16 +44,16 @@ $(document).ready(function() {
 		secondsInterval=setInterval(timer, 1000);
 		showQuestion(questionIndex);
 		showButtons(questionIndex);
-
 	}
 
 	function initializeGame() {
+
 		$('.finalresults').empty();  // Hiding finalresults
-		randomArr = shuffle(arr);
+		randomArr = shuffle(arr); 
 		questionIndex = 0;
 		correct = 0;
 		incorrect = 0;
-		count=7;
+		unanswered = 0;
 	}
 
 	function showQuestion(index) {
@@ -67,21 +68,18 @@ $(document).ready(function() {
 		answerChoices.push(randomArr[index][1]);
 		answerChoices.pushArray(randomArr[index][2]);
 		answerChoices = shuffle(answerChoices);
-		
-		$('.button').css({'display': 'table-cell', 'opacity': '1'}); // displaying buttons
-
+		console.log(answerChoices)
 		var numChoices = answerChoices.length;
 		for (i=0; i < numChoices; i++) {
-			$('.option-' + i).html(answerChoices[i]); // Populating answers
-		}
+			var buttontext = $('.buttontext-' + i).html(answerChoices[i])	
+		}	
 
-		$('.button').on('click', buttonClick);
+		$('.button').css({'opacity': '1'}); // displaying buttons
 	}
 
 	function timer() 
 	{
 		clearInterval(blinkInterval);
-		$('#timeremaining').html(count + " seconds")
 
 	  if (count <= 0)
 	  {
@@ -94,22 +92,24 @@ $(document).ready(function() {
 			if (questionIndex + 1 === numQuestions) { // Unanswered question with none remaining
 				
 				showResults();
-				count = 7
+				count = 10
 				setTimeout(runGame, 5000);
 				
 			} else { // Unaswered question with more remaining
 				questionIndex++
-				count = 7
+				count = 10
+
 				setTimeout(function() { 
 					showQuestion(questionIndex);
 					showButtons(questionIndex);
-					$('button').on("click", buttonClick);	
+						
 				}, 5000);	
 			}
 
 	  //   return;
 	  }
-  	else if (count <= 3)
+  	else 
+  	if (count <= 3)
 	  {
 	    blinkInterval = setIntervalX(function(){ 
 		    	$('#timeremaining').fadeOut(160).fadeIn(160); 
@@ -119,6 +119,7 @@ $(document).ready(function() {
 	  {
 	     $('#timeremaining').css({ 'color': 'red' })
 	  }
+	  $('#timeremaining').html(count + " seconds")
 	  count=count-1; 
 	}
 
@@ -137,7 +138,7 @@ $(document).ready(function() {
 	
 		
 function processUnanswered() {
-		incorrect++;  
+		unanswered++;  
 		resultMsg = $('.framemiddle').html('The correct answer is ' + randomArr[questionIndex][1] + '.'); // Display result msg
 		showImage();
 		showFactoid();
@@ -145,57 +146,49 @@ function processUnanswered() {
 		answerChoices = [];
 }
 
-	// Binding click events
+var buttonClick = $('.button').click(function() {
+	clearInterval(secondsInterval);
+	clearInterval(blinkInterval);
 
-	// var buttonClick = $('.button').on('click', function() {
-		
+	//extracting text value from button
+	// var value = $(this).text(); // Targeting correct button
+	var clickedButtonClass = $(this).attr('class').split(' ')[1];
+	// var value = $('.buttontext-' + i).text();
+	var clickedButtonValue = $('.' + clickedButtonClass + ' .Centered').text();
 
+	// Checking for correct answer
+	var isCorrect = false;
 
-	function buttonClick () {
-		// Stopping countdown
-		clearInterval(secondsInterval);
-		clearInterval(blinkInterval);
-
-		//extracting text value from button
-		var value = $(this).text();
-		// Checking for correct answer
-		var isCorrect = false;
-		if (value === randomArr[questionIndex][1]) {
-			isCorrect = true;
-		}
-		// Displaying result msg
-		if (isCorrect) {
-			showCorrect()
-		} else {
-			showIncorrect()
-		}
-		// buttonClick.unbind();
-		// $('button').off("click", buttonClick);
-		// $(buttonClick).off();
-		// $('.button').off(buttonClick);
-		showImage();
-		showFactoid();
-		fadeWrongAnswers();
-		
-		answerChoices = [];
-		questionIndex++
-
-		count = 7;
-
-		if (questionIndex > (numQuestions - 1)) {
-			showResults();
-			setTimeout(runGame, 5000);
-		} else {
-			setTimeout(function(){  
-				secondsInterval=setInterval(timer, 1000);
-				showQuestion(questionIndex);
-				showButtons(questionIndex);
-			}, 3000); 		
-		}
+	if (clickedButtonValue === randomArr[questionIndex][1]) {
+		isCorrect = true;
 	}
 
-	
-	
+	// Displaying result msg
+	isCorrect ? showCorrect() : showIncorrect()
+
+	showImage();
+	showFactoid();
+	fadeWrongAnswers();
+	answerChoices = [];
+	questionIndex++
+	// Check for end of game
+		if (questionIndex === (numQuestions - 1)) {
+			showResults();
+			
+			setTimeout(runGame, 5000);
+		} else {
+			setTimeout(function(){
+				console.log('correct: ' + correct)  
+				console.log('incorrect: ' + incorrect)  
+				console.log('unanswered: ' + unanswered)  
+				showQuestion(questionIndex);
+				showButtons(questionIndex);
+				secondsInterval=setInterval(timer, 1000);	
+			}, 5000); 
+		}
+});
+
+
 
 	//Function that takes in an array and returns a new array with the same elements shuffled. 
 	function shuffle(array) {
@@ -232,6 +225,7 @@ function processUnanswered() {
 	function showCorrect() {
 		correct++
 		resultMsg = $('.framemiddle').html('Yes! The correct answer is ' + randomArr[questionIndex][1] + '.');  // 'Correct' message
+
 	}
 
 	function showIncorrect() {
@@ -241,7 +235,7 @@ function processUnanswered() {
 
 	function showImage() {
 		$('.framemiddle').prepend('<img id="img" class="img-fluid" src="assets/images/' + randomArr[questionIndex][4] + '" />');  // displaying image
-		$('#img').css({'display': 'block' , 'margin-bottom' : '30px', 'max-width': '100%;', 'height': 'auto'})  //styling image
+		$('#img').css({'display': 'block', 'margin':'auto','margin-bottom' : '30px'})  //styling image
 	}
 
 	function showFactoid() {
@@ -252,10 +246,8 @@ function processUnanswered() {
 	// Setting transparency on wrong answers
 	function fadeWrongAnswers() {
 		var answer = (randomArr[questionIndex][1])
-		console.log(answer)
 		for (i=0; i < answerChoices.length; i++) {
-			var value = $('.option-' + i).text()
-			console.log(value)
+			var value = $('.buttontext-' + i).text()
 
 			// Fading only incorrect answers
 			if (answer !== value) {
@@ -263,6 +255,5 @@ function processUnanswered() {
 			}
 		}
 	}
-	
 //document ready
 });	
