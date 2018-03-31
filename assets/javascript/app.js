@@ -162,6 +162,7 @@ var buttonClick = $('.button').click(function() {
 	if (clickedButtonValue === randomArr[questionIndex][1]) {
 		isCorrect = true;
 	}
+  
 
 	// Displaying result msg
 	isCorrect ? showCorrect() : showIncorrect()
@@ -171,6 +172,10 @@ var buttonClick = $('.button').click(function() {
 	fadeWrongAnswers();
 	answerChoices = [];
 	questionIndex++
+	//Turning off click events for buttons
+  $(document).off('click', '.button', function(){
+  	$(this).off(buttonClick);
+  });
 	// Check for end of game
 		if (questionIndex === (numQuestions - 1)) {
 			showResults();
