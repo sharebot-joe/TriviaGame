@@ -21,7 +21,7 @@ $(document).ready(function() {
   var questionIndex = 0;
   var answerChoices = [];
   var resultMsg = '';
-  var count = 2;
+  var count = 10;
   var secondsInterval = null;
   // Run main program
   $('#introimage').one('click', function() {
@@ -36,7 +36,6 @@ $(document).ready(function() {
 
   function runGame() {
     initializeGame();
-    clearInterval(secondsInterval)
     secondsInterval = setInterval(timer, 1000);
     showQuestion(questionIndex);
     showButtons(questionIndex);
@@ -97,7 +96,7 @@ $(document).ready(function() {
       clearInterval(secondsInterval);
       //counter ended, do something here;
       console.log(buttonClick)
-      buttonClick.off();
+      $('.button').off(buttonClick);
       // buttonClick.unbind();
       processUnanswered();
       console.log('correct: ' + correct)
@@ -160,6 +159,9 @@ $(document).ready(function() {
     fadeWrongAnswers();
     answerChoices = [];
   }
+  $(document.ready).on('click', '.button', function(){
+  	console.log($(this.val()))
+  })
   var buttonClick = $('.button').click(function() {
   	console.log(buttonClick.val())
     clearInterval(secondsInterval);
@@ -192,7 +194,7 @@ $(document).ready(function() {
       showResults();
       setTimeout(runGame, 5000);
     } else {
-      count = 2;
+      count = 10;
       setTimeout(function() {
         console.log('correct: ' + correct)
         console.log('incorrect: ' + incorrect)
