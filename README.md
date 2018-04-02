@@ -8,4 +8,4 @@ Each question will be timed, but there's a short pause between questions. You'll
 
 **Good luck and Go Sonics!**
 
-![alt text](assets/images/sonicstrivia.jpg =500)
+<img src="assets/images/sonicstrivia.jpg" alt="alt text" width="500">
