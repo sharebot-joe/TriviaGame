@@ -3,6 +3,15 @@ $(document).ready(function() {
   var correct = '0';
   var incorrect = '0';
   var unanswered = '0';
+  var numQuestions = arr.length;
+  var randomArr = [];
+  var questionIndex = 0;
+  var answerChoices = [];
+  var resultMsg = '';
+  var count;
+  var blinkInterval;
+  var secondsInterval;
+  var buttons = $('.button');
   var arr = [
     ['Who is the Sonics\' all-time leading scorer?', 'Gary Payton', ['Shawn Kemp', 'Kevin Durant', 'Ray Allen'], 'Payton, who scored 18,207 points in his Sonics career, received his popular nickname "The Glove" in 1993 when his cousin phoned him during the week of the Western Conference Finals against Phoenix and told him, "You\'re holding Kevin Johnson like a baseball in a glove"', 'payton.jpg'],
     ['What is the name of the SuperSonics\' beloved furry mascot?', 'Squatch', ['Hooper', 'Boomer', 'Grizz'], 'In 2007, Squatch attempted to set a world record with a jump of 30 feet on inline skates, over vehicles owned by NBA players Ray Allen and Robert Swift.', 'squatch.jpg'],
@@ -15,15 +24,7 @@ $(document).ready(function() {
     ['In what year did the Seattle SuperSonics win their first NBA championship?', '1979', ['1976', '1980', '1978'], 'This was Seattle\'s first professional sports championship since the Seattle Metropolitans\' victory in the Stanley Cup in 1917.', '1979.jpg'],
     ['Which Seattle Sonics player had the nickname "Big Smooth"?', 'Sam Perkins', ['Frank Brickowski', 'Vin Baker', 'Dale Ellis'], 'A teammate of future Hall of Famers James Worthy and Michael Jordan on the \'82 NCAA Championship Team, Perkins was a three-time All-American, three-time First Team All-ACC, and 1984 USA Basketball Male Athlete of the Year.', 'perkins.jpg']
   ];
-  var numQuestions = arr.length;
-  var randomArr = [];
-  var questionIndex = 0;
-  var answerChoices = [];
-  var resultMsg = '';
-  var count;
-  var blinkInterval;
-  var secondsInterval;
-  var buttons = $('.button');
+  
 
   // Run main program
   $('#introimage').one('click', function() {
