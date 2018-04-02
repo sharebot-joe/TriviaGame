@@ -8,4 +8,4 @@ Each question will be timed, but there's a short pause between questions. You'll
 
 Good luck and Go Sonics!
 
-![alt text](http://url/to/img.png)
+![alt text](assets/images/sonicstrivia.jpg)
