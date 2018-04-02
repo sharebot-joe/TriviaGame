@@ -125,7 +125,7 @@ $(document).ready(function() {
           questionIndex++
           showQuestion(questionIndex);
           showButtons(questionIndex);
-        }, 5000);
+        }, 10000);
       }
     } else if (count <= 3) {
       blinkInterval = setIntervalX(function() {
@@ -203,7 +203,7 @@ $(document).ready(function() {
           showQuestion(questionIndex);
           showButtons(questionIndex);
           console.log(count) 
-        }, 5000);
+        }, 10000);
       }
     });
   }
