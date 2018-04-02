@@ -1,4 +1,4 @@
-$('.button, .framemiddle').css('display', 'none'); //temp hiding buttons
+$('.button, .framemiddle, .restart').css('display', 'none'); //temp hiding buttons
 $(document).ready(function() {
   var correct = '0';
   var incorrect = '0';
@@ -10,19 +10,21 @@ $(document).ready(function() {
     ['Who was the first Seattle SuperSonics player to be named MVP of the NBA All-Star Game?', 'Lenny Wilkens', ['Shawn Kemp', 'Gary Payton', 'Tom Chambers'], 'After retiring as a player, Wilkens was the head coach in Seattle for eight seasons (1977–1985), winning his (and Seattle\'s) only NBA championship in 1979.', 'wilkens.jpg'],
     ['Which Seattle Sonics player had the nickname "Downtown"?', 'Fred Brown', ['Spencer Haywood', 'Desmond Mason', 'Hersey Hawkins'], 'Often among the league leaders in free-throw percentage, Brown also led the NBA in three-point shooting percentage in 1979–80 — the first season in which the three-point line was adopted by the league.', 'brown.jpg'],
     ['The Seattle SuperSonics originally played in which arena?', 'Seattle Center Coliseum', ['Kingdome', 'Key Arena', 'Tacoma Dome'], 'The Beatles performed at the Coliseum on Aug. 21, 1964 in front of 14,300 screaming fans. Tickets: $5.', 'coliseum.jpg'],
-    ['Who was not a part of the Seattle Sonics\' "Big Three" in the late 1980\'s?', 'Nate McMillan', ['Xavier McDaniel', 'Dale Ellis', 'Tom Chambers'], 'McMillan was known for his superb defense, leading the NBA in steals per game for the 1993–94 season and being named to the NBA All-Defensive Second Team for the 1993–94 and 1994–95 seasons.', 'mcmillan.jpg'],
+    ['Who was not a part of the Seattle Sonics\' \"Big Three\" in the late 1980\'s?', 'Nate McMillan', ['Xavier McDaniel', 'Dale Ellis', 'Tom Chambers'], 'McMillan was known for his superb defense, leading the NBA in steals per game for the 1993–94 season and being named to the NBA All-Defensive Second Team for the 1993–94 and 1994–95 seasons.', 'mcmillan.jpg'],
     ['Which Seattle Sonics player did not make the 1995 NBA All-Star Game?', 'Kendall Gill', ['Shawn Kemp', 'Gary Payton', 'Detlef Schrempf'], 'Gill was chosen in the 1990 NBA draft as the fifth overall pick by the Charlotte Hornets, and was named First Team All-Rookie for the 1990–91 season.', 'gill.jpg'],
     ['In what year did the Seattle SuperSonics win their first NBA championship?', '1979', ['1976', '1980', '1978'], 'This was Seattle\'s first professional sports championship since the Seattle Metropolitans\' victory in the Stanley Cup in 1917.', '1979.jpg'],
     ['Which Seattle Sonics player had the nickname "Big Smooth"?', 'Sam Perkins', ['Frank Brickowski', 'Vin Baker', 'Dale Ellis'], 'A teammate of future Hall of Famers James Worthy and Michael Jordan on the \'82 NCAA Championship Team, Perkins was a three-time All-American, three-time First Team All-ACC, and 1984 USA Basketball Male Athlete of the Year.', 'perkins.jpg']
   ];
   var numQuestions = arr.length;
   var randomArr = [];
-  var blinkInterval = null;
   var questionIndex = 0;
   var answerChoices = [];
   var resultMsg = '';
-  var count = 2;
-  var secondsInterval = null;
+  var count;
+  var blinkInterval;
+  var secondsInterval;
+  var buttons = $('.button');
+
   // Run main program
   $('#introimage').one('click', function() {
     hideIntro();
@@ -32,23 +34,27 @@ $(document).ready(function() {
   function hideIntro() {
     $('#introimage').hide();
     $('.clickme').hide();
+    $('.restart').hide();
   }
 
   function runGame() {
     initializeGame();
-    clearInterval(secondsInterval)
-    secondsInterval = setInterval(timer, 1000);
     showQuestion(questionIndex);
     showButtons(questionIndex);
   }
 
   function initializeGame() {
-    $('.finalresults').empty(); // Hiding finalresults
+    $('.finalresults').html(''); 
+    $('#timeremaining').html('');
+    $('.restart').hide();
     randomArr = shuffle(arr);
     questionIndex = 0;
     correct = 0;
     incorrect = 0;
     unanswered = 0;
+    count = 20;
+    clearInterval(secondsInterval)
+    clearInterval(blinkInterval)
   }
   //Function that takes in an array and returns a new array with the same elements shuffled. 
   function shuffle(a) {
@@ -61,6 +67,7 @@ $(document).ready(function() {
     }
     return a
   }
+  //Function that pushes an entire array into another array
   Array.prototype.pushArray = function() {
     var toPush = this.concat.apply([], arguments);
     for (var i = 0, len = toPush.length; i < len; ++i) {
@@ -69,7 +76,6 @@ $(document).ready(function() {
   };
 
   function showQuestion(index) {
-    // $('#timeremaining').html(count + " seconds") //visual placeholder
     $('.button, .framemiddle').css('display', 'block');
     var question = randomArr[index][0];
     $('.framemiddle').html(question);
@@ -79,55 +85,47 @@ $(document).ready(function() {
     answerChoices.push(randomArr[index][1]);
     answerChoices.pushArray(randomArr[index][2]);
     answerChoices = shuffle(answerChoices);
-    console.log(answerChoices)
     var numChoices = answerChoices.length;
     for (i = 0; i < numChoices; i++) {
       var buttontext = $('.buttontext-' + i).html(answerChoices[i])
     }
-    $('.button').css({
-      'opacity': '1'
-    }); // displaying buttons
-    // setInterval(timer, 1000);  //starting timer
+    $('.button').css('opacity', '1'); // displaying buttons
+    addClickHandlers();
+    // console.log('questionIndex: ' + questionIndex)
+    // console.log('numQuestions - 1: ' + (numQuestions - 1))
+    count = 20
+    
+    
+    $('#timeremaining').css({
+        'color': '#296037'
+      })
+    secondsInterval = setInterval(timer, 1000)
   }
+
 
   function timer() {
     clearInterval(blinkInterval);
-    $('#timeremaining').html(count + " seconds");
-    if (count <= 0) {
+    if (count <= 0) {  // When countdown reaches zero
+      $('#timeremaining').html('Time\'s Up!');
       clearInterval(secondsInterval);
-      //counter ended, do something here;
-      console.log(buttonClick)
-      buttonClick.off();
-      // buttonClick.unbind();
+      $('.button').off("click");
       processUnanswered();
-      console.log('correct: ' + correct)
-      console.log('incorrect: ' + incorrect)
-      console.log('unanswered: ' + unanswered)
-      if (questionIndex + 1 !== numQuestions) { // Unaswered question with more remaining
-        questionIndex++
-        count = 10
-        setTimeout(function() {
-          $('#timeremaining').text(count + " seconds") //visual placeholder
-          console.log('count: ' + count)
-          showQuestion(questionIndex);
-          showButtons(questionIndex);
-          console.log('count: ' + count)
-          secondsInterval = setInterval(timer, 1000);
-        }, 5000);
-      } else if (questionIndex + 1 === numQuestions) { // Unanswered question with none remaining
+
+      if (questionIndex >= (numQuestions - 1)) { //Check for end game
         showResults();
-        count = 10
-        setTimeout(runGame, 5000);
-      } else { // Unaswered question with more remaining
-        questionIndex++
-        count = 10
-        setTimeout(function() {
-          $('#timeremaining').text(count + " seconds") //visual placeholder
+        $('.restart').show();
+        var restart = $('.restart').show();
+        restart.on('click', function() {
+          runGame()
+        })
+      } 
+      else 
+      { 
+        var nextQuestion = setTimeout(function() {
+          questionIndex++
           showQuestion(questionIndex);
           showButtons(questionIndex);
-          secondsInterval = setInterval(timer, 1000);
         }, 5000);
-        return
       }
     } else if (count <= 3) {
       blinkInterval = setIntervalX(function() {
@@ -138,7 +136,9 @@ $(document).ready(function() {
         'color': 'red'
       })
     }
+    $('#timeremaining').html(count + " seconds");
     count = count - 1;
+    console.log('current count: ' + count)
   }
 
   function setIntervalX(callback, delay, repetitions) {
@@ -153,85 +153,79 @@ $(document).ready(function() {
 
   function processUnanswered() {
     unanswered++;
-    console.log(unanswered)
+    console.log('unanswered: ' + unanswered)
     resultMsg = $('.framemiddle').html('The correct answer is ' + randomArr[questionIndex][1] + '.'); // Display result msg
     showImage();
     showFactoid();
     fadeWrongAnswers();
     answerChoices = [];
   }
-  var buttonClick = $('.button').click(function() {
-  	console.log(buttonClick.val())
-    clearInterval(secondsInterval);
-    clearInterval(blinkInterval);
-    //extracting text value from button
-    // var value = $(this).text(); // Targeting correct button
-    console.log(clickedButtonClass)
-    var clickedButtonClass = $(this).attr('class').split(' ')[1];
-    // var value = $('.buttontext-' + i).text();
-    var clickedButtonValue = $('.' + clickedButtonClass + ' .Centered').text();
-    // Checking for correct answer
-    var isCorrect = false;
-    console.log(randomArr)
-    if (clickedButtonValue === randomArr[questionIndex][1]) {
-      isCorrect = true;
-    }
-    // Displaying result msg
-    isCorrect ? showCorrect() : showIncorrect()
-    showImage();
-    showFactoid();
-    fadeWrongAnswers();
-    answerChoices = [];
-    questionIndex++
-    //Turning off click events for buttons
-    $(document).off('click', '.button', function() {
-      $(this).off(buttonClick);
+  function addClickHandlers() {
+
+    buttons.on('click', function() {
+      clearInterval(secondsInterval);
+      clearInterval(blinkInterval);
+      buttons.off("click"); // Turning off click handler once player has made a selection
+      
+      var clickedButtonClass = $(this).attr('class').split(' ')[1];
+      // var value = $('.buttontext-' + i).text();
+      var clickedButtonValue = $('.' + clickedButtonClass + ' .Centered').text();
+      // console.log(clickedButtonClass)
+      // console.log(clickedButtonValue)
+
+      // Checking for correct answer
+      var isCorrect = false;
+      if (clickedButtonValue === randomArr[questionIndex][1]) {
+        isCorrect = true;
+      }
+      console.log(isCorrect)
+      // Displaying result msg
+      isCorrect ? showCorrect() : showIncorrect()
+      showImage();
+      showFactoid();
+      fadeWrongAnswers();
+      answerChoices = [];
+
+      // Check for end of game
+      if (questionIndex >= (numQuestions - 1)) {
+        var results = showResults();
+        var restart = $('.restart').show();
+        restart.on('click', function() {
+          runGame()
+        })
+        
+      } 
+      else if (questionIndex < (numQuestions - 1))
+      { 
+        questionIndex++
+        var nextQuestion = setTimeout(function() {
+          $('#timeremaining').html('');
+          showQuestion(questionIndex);
+          showButtons(questionIndex);
+          console.log(count) 
+        }, 5000);
+      }
     });
-    // Check for end of game
-    if (questionIndex === (numQuestions - 1)) {
-      showResults();
-      setTimeout(runGame, 5000);
-    } else {
-      count = 2;
-      setTimeout(function() {
-        console.log('correct: ' + correct)
-        console.log('incorrect: ' + incorrect)
-        console.log('unanswered: ' + unanswered)
-        $('#timeremaining').text(count + " seconds")
-        setInterval(timer, 1000);
-        showQuestion(questionIndex);
-        showButtons(questionIndex);
-      }, 5000);
-    }
-  });
-  // function shuffle(array) {
-  //   var currentIndex = array.length, temporaryValue, randomIndex;
-  //   // While there remain elements to shuffle...
-  //   while (0 !== currentIndex) {
-  //     // Pick a remaining element...
-  //     randomIndex = Math.floor(Math.random() * currentIndex);
-  //     currentIndex -= 1;
-  //     // And swap it with the current element.
-  //     temporaryValue = array[currentIndex];
-  //     array[currentIndex] = array[randomIndex];
-  //     array[randomIndex] = temporaryValue;
-  //   }
-  //   return array;
-  // }
+  }
   function showResults() {
-    $('.finalresults').append('<div>Correct: ' + correct + '</div>')
-    $('.finalresults').append('<div>Incorrect: ' + incorrect + '</div>')
-    $('.finalresults').append('<div>Unanswered: ' + unanswered + '</div>')
+    var correctDiv = $('<div>Correct: ' + correct + '</div>')
+    var incorrectDiv = $('<div>Incorrect: ' + incorrect + '</div>')
+    var unansweredDiv = $('<div>Unanswered: ' + unanswered + '</div>')
+    correctDiv.css("color", "green")
+    incorrectDiv.css("color", "red")
+    unansweredDiv.css("color", "gray")
+
+    $('.finalresults').append(correctDiv, incorrectDiv, unansweredDiv)
   }
 
   function showCorrect() {
     correct++
-    resultMsg = $('.framemiddle').html('Yes! The correct answer is ' + randomArr[questionIndex][1] + '.'); // 'Correct' message
+    resultMsg = $('.framemiddle').html('Yes! The correct answer is ' + randomArr[questionIndex][1] + '.');
   }
 
   function showIncorrect() {
     incorrect++
-    resultMsg = $('.framemiddle').html('Wrong! The correct answer is ' + randomArr[questionIndex][1] + '.');
+    resultMsg = $('.framemiddle').html('Wrong! The correct answer is ' + randomArr[questionIndex][1] + '.'); 
   }
 
   function showImage() {

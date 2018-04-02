@@ -57,9 +57,12 @@ body {
 	font-weight: bold;
 }
 #timeremaining {
-	font-size: 1rem;
+	font-size: 1.2rem;
 	font-weight: bold;
 	color: #296037;
+}
+.finalresults {
+	font-size: 1.2rem;
 }
 .framemiddle {
 	position: relative;
@@ -80,6 +83,23 @@ body {
   font-size: 1.7rem;
   font-weight: bold;
   color: #fff;
+}
+.restart {
+	width: 240px;
+	margin: 0 auto;
+	padding: 20px;
+	background: darkgray;
+	color: #fff;
+	font-weight: bold;
+	font-size: 1.2em;
+	border: 2px solid white;
+}
+.restart:hover {background-color: #808080}
+
+.restart:active {
+  background-color: #808080;
+  box-shadow: 0 4px #666;
+  transform: translateY(4px);
 }
 .framebottom .row {
 	margin-left: 10px;
