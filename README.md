@@ -2,7 +2,9 @@ Welcome to the Seattle SuperSonics Trivia Game, **the best online trivia game ab
 
 Prepare to be tested to your limits with this challenging trivia game starring your favorite SuperSonics legends!
 
-To get started, just click the button in the center of the screen.
+Click the Github Pages link above to get started.
+
+Once the game load, click the button in the center of the screen to begin.
 
 Each question will be timed, but there's a short pause between questions. 
 
