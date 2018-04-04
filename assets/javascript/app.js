@@ -126,7 +126,7 @@ $(document).ready(function() {
           questionIndex++
           showQuestion(questionIndex);
           showButtons(questionIndex);
-        }, 10000);
+        }, 8000);
       }
     } else if (count <= 3) {
       blinkInterval = setIntervalX(function() {
@@ -193,14 +193,14 @@ $(document).ready(function() {
         })
         
       } 
-      else if (questionIndex < (numQuestions - 1))
+      else
       { 
         questionIndex++
         var nextQuestion = setTimeout(function() {
           $('#timeremaining').html('');
           showQuestion(questionIndex);
           showButtons(questionIndex);
-        }, 10000);
+        }, 8000);
       }
     });
   }
