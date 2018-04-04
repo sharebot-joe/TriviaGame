@@ -1,9 +1,5 @@
 $('.button, .framemiddle, .restart').css('display', 'none'); //temp hiding buttons
 $(document).ready(function() {
-  var correct = '0';
-  var incorrect = '0';
-  var unanswered = '0';
-  var numQuestions = arr.length;
   var randomArr = [];
   var questionIndex = 0;
   var answerChoices = [];
@@ -24,7 +20,10 @@ $(document).ready(function() {
     ['In what year did the Seattle SuperSonics win their first NBA championship?', '1979', ['1976', '1980', '1978'], 'This was Seattle\'s first professional sports championship since the Seattle Metropolitans\' victory in the Stanley Cup in 1917.', '1979.jpg'],
     ['Which Seattle Sonics player had the nickname "Big Smooth"?', 'Sam Perkins', ['Frank Brickowski', 'Vin Baker', 'Dale Ellis'], 'A teammate of future Hall of Famers James Worthy and Michael Jordan on the \'82 NCAA Championship Team, Perkins was a three-time All-American, three-time First Team All-ACC, and 1984 USA Basketball Male Athlete of the Year.', 'perkins.jpg']
   ];
-  
+  var correct = '0';
+  var incorrect = '0';
+  var unanswered = '0';
+  var numQuestions = arr.length;
 
   // Run main program
   $('#introimage').one('click', function() {
@@ -92,6 +91,7 @@ $(document).ready(function() {
     }
     $('.button').css('opacity', '1'); // displaying buttons
     addClickHandlers();
+    // Use for testing true condition in timer()
     // console.log('questionIndex: ' + questionIndex)
     // console.log('numQuestions - 1: ' + (numQuestions - 1))
     count = 20
@@ -139,7 +139,7 @@ $(document).ready(function() {
     }
     $('#timeremaining').html(count + " seconds");
     count = count - 1;
-    console.log('current count: ' + count)
+    // console.log('current count: ' + count)
   }
 
   function setIntervalX(callback, delay, repetitions) {
@@ -154,7 +154,6 @@ $(document).ready(function() {
 
   function processUnanswered() {
     unanswered++;
-    console.log('unanswered: ' + unanswered)
     resultMsg = $('.framemiddle').html('The correct answer is ' + randomArr[questionIndex][1] + '.'); // Display result msg
     showImage();
     showFactoid();
@@ -171,15 +170,13 @@ $(document).ready(function() {
       var clickedButtonClass = $(this).attr('class').split(' ')[1];
       // var value = $('.buttontext-' + i).text();
       var clickedButtonValue = $('.' + clickedButtonClass + ' .Centered').text();
-      // console.log(clickedButtonClass)
-      // console.log(clickedButtonValue)
+
 
       // Checking for correct answer
       var isCorrect = false;
       if (clickedButtonValue === randomArr[questionIndex][1]) {
         isCorrect = true;
       }
-      console.log(isCorrect)
       // Displaying result msg
       isCorrect ? showCorrect() : showIncorrect()
       showImage();
@@ -203,7 +200,6 @@ $(document).ready(function() {
           $('#timeremaining').html('');
           showQuestion(questionIndex);
           showButtons(questionIndex);
-          console.log(count) 
         }, 10000);
       }
     });
