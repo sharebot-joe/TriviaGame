@@ -1,5 +1,5 @@
 ## Seattle SuperSonics Trivia Game
-**The best online trivia game about the Seattle SuperSonics!**
+**The BEST Seattle SuperSonics trivia game on the Internet!**
 
 Prepare to be tested to your limits with 10 challenging trivia questions starring your favorite SuperSonics legends!
 
