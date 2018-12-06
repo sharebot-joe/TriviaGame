@@ -3,11 +3,9 @@
 
 [Start Game](https://sharebot-joe.github.io/TriviaGame/ "Seattle SuperSonics Trivia Game")
 
-Are you a diehard SuperSonics fan? Test your knowledge with 10 challenging trivia questions featuring a variety of SuperSonics legends!
+Are you a diehard SuperSonics fan? Test your knowledge with 10 challenging trivia questions featuring your favorite SuperSonics legends!
 
-Click the link above to get started.
-
-Once the game load, click the button in the center of the screen to begin.
+Click the link above to begin.
 
 Each question will be timed. You'll see how you did at the end of the game.
 
